@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Check for git package
+if ! command -v git &> /dev/null
+then
+    echo "git is not installed, installing..."
+    sudo dnf install -y git
+else
+    echo "git is already installed, pulling zathras repository..."
+    # Clone the repository if it doesn't exist, otherwise pull updates
+    REPO_DIR="zathras"
+    if [ ! -d "$REPO_DIR" ]; then
+        git clone https://github.com/redhat-performance/zathras.git $REPO_DIR
+    else
+        cd $REPO_DIR
+        git pull origin master
+    fi
+fi
