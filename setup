@@ -1,18 +1,32 @@
 #!/bin/bash
 
+# Function to clone or update a repository
+# Takes two arguments: the directory name and the Git URL
+update_repo() {
+    local repo_dir=$1
+    local git_url=$2
+
+    if [ ! -d "$repo_dir" ]; then
+        echo "Cloning the repository from $git_url..."
+        git clone $git_url $repo_dir
+    else
+        echo "Updating the repository in $repo_dir..."
+        cd $repo_dir
+        git pull origin master
+        cd ..
+    fi
+}
+
 # Check for git package
 if ! command -v git &> /dev/null
 then
     echo "git is not installed, installing..."
     sudo dnf install -y git
-else
-    echo "git is already installed, pulling zathras repository..."
-    # Clone the repository if it doesn't exist, otherwise pull updates
-    REPO_DIR="zathras"
-    if [ ! -d "$REPO_DIR" ]; then
-        git clone https://github.com/redhat-performance/zathras.git $REPO_DIR
-    else
-        cd $REPO_DIR
-        git pull origin master
-    fi
 fi
+
+# Define repository directory and URL
+REPO_DIR="zathras"
+GIT_URL="https://github.com/redhat-performance/zathras.git"
+
+# Create or update the directory
+update_repo $REPO_DIR $GIT_URL
